@@ -3,20 +3,12 @@
 
 #define SWITCH_PIN 0
 
-#define SEPAR1_PIN 32
-#define SEPAR2_PIN 33
-#define BUZZER_PIN 4
+#define SEPAR_PIN 6
+#define BUZZER_PIN 15
 
-#define CONT1_PIN 25
-#define CONT2_PIN 13
+#define CONT_PIN 8
 
-#define SDA_PIN 21
-#define SCL_PIN 22
-
-#define GPS_TX_PIN 34
-#define GPS_RX_PIN 12
-
-#define SERVO_1_PIN 16
-#define SERVO_2_PIN 17
+#define SDA_PIN 34
+#define SCL_PIN 36
 
 #endif

@@ -6,8 +6,7 @@ Tasks tasks;
 
 void Tasks::continuityTest() {
 
-    glob.dataFrame.continuity1 = !digitalRead(CONT1_PIN);
-    glob.dataFrame.continuity2 = !digitalRead(CONT2_PIN);
+    glob.dataFrame.continuity = !digitalRead(CONT_PIN);
 }
 
 /*********************************************************************/
@@ -67,9 +66,7 @@ void Tasks::buzz() {
     buzzBeep(30, 150, 2);
     vTaskDelay(2000 / portTICK_PERIOD_MS);
 
-    if (glob.dataFrame.continuity1 && glob.dataFrame.continuity2)   buzzBeep(500, 500, 3);
-    else if (glob.dataFrame.continuity1)                            buzzBeep(500, 500, 1);
-    else if (glob.dataFrame.continuity2)                            buzzBeep(500, 500, 2);
+    if (glob.dataFrame.continuity)                            buzzBeep(500, 500, 1);
 }
 
 /*********************************************************************/
@@ -94,25 +91,7 @@ bool Tasks::isLaunchDetected() {
 
 bool Tasks::isApogeeDetected() {
 
-    if (glob.dataFrame.speed < -1 || (glob.memory.isSep1BeforeApog && glob.dataFrame.speed < 10)) {
-
-        criteriaCounter++;
-        if (criteriaCounter > CRITERIA_MARGIN) {
-
-            criteriaCounter = 0;
-            return true;
-        }
-    }
-    else criteriaCounter = 0;
-
-    return false;
-}
-
-/*********************************************************************/
-
-bool Tasks::isSecondChuteTime() {
-
-    if (glob.dataFrame.altitude < glob.memory.secondSeparAltitude) {
+    if (glob.dataFrame.speed < 10) {
 
         criteriaCounter++;
         if (criteriaCounter > CRITERIA_MARGIN) {
@@ -175,13 +154,10 @@ void Tasks::flashTask() {
                 DataFrame tempData;
                 xQueueReceive(glob.dataFramesFifo, &tempData, portMAX_DELAY);
 
-                if (glob.memory.isCsvFile) {
-                    char tempDataAscii[120];
-                    strcpy(tempDataAscii, tempData.toString().c_str());
-                    strcat(tempDataAscii, "\n");
-                    file.write((uint8_t*) tempDataAscii, strlen(tempDataAscii));
-                }
-                else file.write((uint8_t*) &tempData, sizeof(tempData));
+                char tempDataAscii[120];
+                strcpy(tempDataAscii, tempData.toString().c_str());
+                strcat(tempDataAscii, "\n");
+                file.write((uint8_t*) tempDataAscii, strlen(tempDataAscii));
             }
 
             file.close();
@@ -199,15 +175,7 @@ void Tasks::readFlash() {
 
     File file = LITTLEFS.open("/FlightData.apg", "r");
 
-    if (glob.memory.isCsvFile) {
-        while (file.available()) Serial.print(file.readString());
-    }
-    else {
-        DataFrame dane;
-        while (file.readBytes((char*) &dane, sizeof(dane))) {
-            Serial.println(dane.toString());
-        }
-    }
+    while (file.available()) Serial.print(file.readString());
 
     file.close();
 }
@@ -222,11 +190,6 @@ void Tasks::clearMem() {
     File file = LITTLEFS.open("/FlightData.apg", "w");
 
     memset(&glob.memory, 0, sizeof(glob.memory));
-
-    glob.memory.secondSeparAltitude = 100;
-    glob.memory.loraDelay_ms = 2000;
-    glob.memory.loraFreqMHz = 433;
-    strcpy(glob.memory.callsign, "APOGEMIX");
 
     EEPROM.put(0, glob.memory);
     EEPROM.commit();
@@ -261,29 +224,4 @@ void Tasks::recalibrate() {
 
     glob.initialPressure = bmp.readPressure();
     glob.initialTemper = bmp.readTemperature() * TEMPERATURE_FIX_A + TEMPERATURE_FIX_B;
-}
-
-/*********************************************************************/
-
-void Tasks::servosInit() {
-
-    servos[0].attach(SERVO_1_PIN);
-    servos[1].attach(SERVO_2_PIN);
-
-    servos[0].write(glob.memory.servo1Initial);
-    servos[1].write(glob.memory.servo2Initial);
-}
-
-/*********************************************************************/
-
-void Tasks::servosSet(bool isApogee) {
-
-    if (isApogee) {
-        servos[0].write(glob.memory.servo1Apog);
-        servos[1].write(glob.memory.servo2Apog);
-    }
-    else {
-        servos[0].write(glob.memory.servo1dd);
-        servos[1].write(glob.memory.servo2dd);
-    }
 }

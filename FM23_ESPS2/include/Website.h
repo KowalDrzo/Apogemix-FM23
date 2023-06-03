@@ -14,14 +14,12 @@ class Website {
         SERVOS_SETTINGS
     };
 
-    String ssid = String("Apogemix_pro_") + String(APOGEMIX_ID);
-    const char* password = "ApogemixPro";
+    String ssid = String("Apogemix_FM23_") + String(APOGEMIX_ID);
+    const char* password = "ApogemixFM23";
     AsyncWebServer server = AsyncWebServer(80);
     bool enabled = false;
 
     String generateHtml();
-    String generateSettingsPage(uint8_t settingsType);
-    void handleArgs(AsyncWebServerRequest *request);
 
 public:
 

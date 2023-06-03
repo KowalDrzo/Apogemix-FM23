@@ -33,7 +33,6 @@ public:
 
     bool isLaunchDetected();
     bool isApogeeDetected();
-    bool isSecondChuteTime();
     bool isOnGround();
 
     static void flashTask();
@@ -42,9 +41,6 @@ public:
     void recalibrate();
 
     void clearMem();
-
-    void servosInit();
-    void servosSet(bool isApogee);
 };
 
 extern Tasks tasks;
