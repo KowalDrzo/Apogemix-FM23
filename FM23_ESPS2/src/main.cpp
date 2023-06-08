@@ -6,8 +6,7 @@ void setup() {
 
     Serial.begin(115200);
     Serial.setTimeout(10);
-
-    delay(1000);
+    tasks.checkSerial(5);
 
     Wire.begin(SDA_PIN, SCL_PIN);
     tasks.bmp.begin(BMP085_ULTRAHIGHRES, &Wire);

@@ -73,10 +73,10 @@ void Tasks::buzz() {
 
 bool Tasks::isLaunchDetected() {
 
-    if (glob.dataFrame.altitude > 20) {
+    if (glob.dataFrame.altitude > 20 && glob.dataFrame.speed > 1) {
 
         criteriaCounter++;
-        if (criteriaCounter > CRITERIA_MARGIN) {
+        if (criteriaCounter >= CRITERIA_MARGIN) {
 
             criteriaCounter = 0;
             return true;
@@ -94,7 +94,7 @@ bool Tasks::isApogeeDetected() {
     if (glob.dataFrame.speed < 10) {
 
         criteriaCounter++;
-        if (criteriaCounter > CRITERIA_MARGIN) {
+        if (criteriaCounter >= CRITERIA_MARGIN) {
 
             criteriaCounter = 0;
             return true;
@@ -112,7 +112,7 @@ bool Tasks::isOnGround() {
     if (abs(glob.dataFrame.speed) < 2) {
 
         criteriaCounter++;
-        if (criteriaCounter > CRITERIA_MARGIN) {
+        if (criteriaCounter >= CRITERIA_MARGIN) {
 
             criteriaCounter = 0;
             return true;
@@ -175,7 +175,9 @@ void Tasks::readFlash() {
 
     File file = LITTLEFS.open("/FlightData.apg", "r");
 
-    while (file.available()) Serial.print(file.readString());
+    if (serialOpened) {
+        while (file.available()) Serial.print(file.readString());
+    }
 
     file.close();
 }
@@ -224,4 +226,18 @@ void Tasks::recalibrate() {
 
     glob.initialPressure = bmp.readPressure();
     glob.initialTemper = bmp.readTemperature() * TEMPERATURE_FIX_A + TEMPERATURE_FIX_B;
+}
+
+/*********************************************************************/
+
+void Tasks::checkSerial(uint8_t blockTime_s) {
+
+    for (uint8_t i = 0; i < blockTime_s; i++) {
+
+        vTaskDelay(1000 / portTICK_PERIOD_MS);
+        if (Serial) {
+            serialOpened = true;
+            return;
+        }
+    }
 }

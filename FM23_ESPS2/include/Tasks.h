@@ -20,6 +20,7 @@ class Tasks {
     uint8_t criteriaCounter = 0;
     void continuityTest();
     Servo servos[2];
+    bool serialOpened = false;
 
 public:
 
@@ -39,6 +40,7 @@ public:
     void readFlash();
     void updateDataBase();
     void recalibrate();
+    void checkSerial(uint8_t blockTime_s);
 
     void clearMem();
 };
