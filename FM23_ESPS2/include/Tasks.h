@@ -4,9 +4,7 @@
 #include <Arduino.h>
 #include <EEPROM.h>
 #include <LITTLEFS.h>
-#include <Wire.h>
 #include <SPI.h>
-#include <Adafruit_BMP085.h>
 #include <TinyGPS++.h>
 #include <Servo.h>
 
@@ -24,7 +22,6 @@ class Tasks {
 
 public:
 
-    Adafruit_BMP085 bmp;
     TinyGPSPlus gps;
 
     void buzzBeep(uint16_t activeTime, uint16_t sleepTime, uint8_t n);
@@ -37,6 +34,8 @@ public:
     bool isOnGround();
 
     static void flashTask();
+    static void filterTask();
+
     void readFlash();
     void updateDataBase();
     void recalibrate();

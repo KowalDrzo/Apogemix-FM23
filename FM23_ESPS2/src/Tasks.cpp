@@ -14,8 +14,8 @@ void Tasks::continuityTest() {
 void Tasks::measure() {
 
     // Pressure and temperature:
-    glob.dataFrame.pressure = bmp.readPressure();
-    glob.dataFrame.temper = bmp.readTemperature() * TEMPERATURE_FIX_A + TEMPERATURE_FIX_B;
+    glob.dataFrame.pressure = glob.bmpFilter.getPress();
+    glob.dataFrame.temper = glob.bmpFilter.getTemp();
 
     // Time:
     uint32_t newTime = millis();
@@ -23,15 +23,9 @@ void Tasks::measure() {
     if (!timeDiff) timeDiff++;
     glob.dataFrame.time = newTime;
 
-    // Altitude:
-    float oldAlt = glob.dataFrame.altitude;
-    float newAlt = (glob.initialTemper+273.15)/0.0065*(1.0 - pow(glob.dataFrame.pressure/glob.initialPressure, 0.1903));
-    glob.dataFrame.altitude = ALPHA_H * oldAlt + (1-ALPHA_H) * newAlt;
-
-    // Speed:
-    float oldSpd = glob.dataFrame.speed;
-    float newSpd = 1000.0*(glob.dataFrame.altitude - oldAlt) / timeDiff;
-    glob.dataFrame.speed = ALPHA_V * oldSpd + (1-ALPHA_V) * newSpd;
+    // Filtered altitude and speed:
+    glob.dataFrame.altitude = glob.bmpFilter.getAlt();
+    glob.dataFrame.speed = glob.bmpFilter.getSpeed();
 
     // Contunuity:
     continuityTest();
@@ -186,6 +180,19 @@ void Tasks::readFlash() {
 
 /*********************************************************************/
 
+void Tasks::filterTask() {
+
+    vTaskDelay(500 / portTICK_PERIOD_MS);
+
+    while(1) {
+
+        glob.bmpFilter.feedFilter(millis(), glob.initialPressure, glob.initialTemper);
+        vTaskDelay(20 / portTICK_PERIOD_MS);
+    }
+}
+
+/*********************************************************************/
+
 void Tasks::clearMem() {
 
     LITTLEFS.begin(true);
@@ -224,8 +231,8 @@ void Tasks::updateDataBase() {
 
 void Tasks::recalibrate() {
 
-    glob.initialPressure = bmp.readPressure();
-    glob.initialTemper = bmp.readTemperature() * TEMPERATURE_FIX_A + TEMPERATURE_FIX_B;
+    glob.initialPressure = glob.bmpFilter.getPress();
+    glob.initialTemper = glob.bmpFilter.getTemp();
 }
 
 /*********************************************************************/

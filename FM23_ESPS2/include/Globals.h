@@ -2,6 +2,7 @@
 #define GLOBALS_H
 
 #include "DataStructs.h"
+#include "BmpFilter.h"
 
 struct GlobalAggregator {
 
@@ -12,6 +13,7 @@ struct GlobalAggregator {
     float initialTemper;
     int16_t apogee = 0;
     int16_t maxSpeed = 0;
+    BmpFilter bmpFilter;
 };
 
 extern GlobalAggregator glob;

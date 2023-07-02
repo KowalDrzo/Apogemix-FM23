@@ -9,7 +9,7 @@ void setup() {
     tasks.checkSerial(5);
 
     Wire.begin(SDA_PIN, SCL_PIN);
-    tasks.bmp.begin(BMP085_ULTRAHIGHRES, &Wire);
+    glob.bmpFilter.begin(&Wire);
 
     pinMode(SEPAR_PIN, OUTPUT);
     pinMode(BUZZER_PIN, OUTPUT);
@@ -33,7 +33,8 @@ void setup() {
     glob.dataFramesFifo = xQueueCreate(FRAMES_IN_Q, sizeof(DataFrame));
 
     // Pararell tasks:
-    xTaskCreate((TaskFunction_t) Tasks::flashTask, "Flash Task", 16384, NULL, 1, NULL);
+    xTaskCreate((TaskFunction_t) Tasks::flashTask,  "Flash Task",  16384, NULL, 1, NULL);
+    xTaskCreate((TaskFunction_t) Tasks::filterTask, "Filter Task", 16384, NULL, 1, NULL);
 
     // LOOPS:
     glob.dataFrame.rocketState = RAIL;
