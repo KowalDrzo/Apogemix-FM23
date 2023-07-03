@@ -16,8 +16,5 @@ void BmpFilter::feedFilter(uint32_t time_ms, float initialPress, float initialTe
     float rawSpeed = 1000.0*(forecastAlt - oldForecastAlt) / timeDiff;
     forecastSpeed = ALPHA_V * oldForecastSpeed + (1-ALPHA_V) * rawSpeed;
 
-    Serial.println(press);
     Serial.println(rawAlt);
-    Serial.println(forecastAlt);
-    Serial.println("");
 }

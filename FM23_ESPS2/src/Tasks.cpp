@@ -187,7 +187,7 @@ void Tasks::filterTask() {
     while(1) {
 
         glob.bmpFilter.feedFilter(millis(), glob.initialPressure, glob.initialTemper);
-        vTaskDelay(20 / portTICK_PERIOD_MS);
+        vTaskDelay(50 / portTICK_PERIOD_MS);
     }
 }
 

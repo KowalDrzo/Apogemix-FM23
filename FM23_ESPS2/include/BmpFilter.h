@@ -16,7 +16,7 @@ class BmpFilter {
 
 public:
 
-    bool begin(TwoWire *wire) { return bmp.begin(BMP085_STANDARD, wire); }
+    bool begin(TwoWire *wire) { return bmp.begin(BMP085_ULTRAHIGHRES, wire); }
     float getTemp() { return bmp.readTemperature() * TEMPERATURE_FIX_A + TEMPERATURE_FIX_B; }
     float getPress() { return bmp.readPressure(); }
 
