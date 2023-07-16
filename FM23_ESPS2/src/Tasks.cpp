@@ -14,7 +14,13 @@ void Tasks::continuityTest() {
 void Tasks::measure() {
 
     // Pressure and temperature:
-    glob.dataFrame.pressure = bmp.readPressure();
+    float press[3];
+
+    for (uint8_t i = 0; i < 3; i++) {
+        press[i] = bmp.readPressure();
+    }
+    std::sort(press, press+3);
+    glob.dataFrame.pressure = press[1];
     glob.dataFrame.temper = bmp.readTemperature() * TEMPERATURE_FIX_A + TEMPERATURE_FIX_B;
 
     // Time:

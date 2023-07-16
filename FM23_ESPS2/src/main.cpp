@@ -9,7 +9,7 @@ void setup() {
     tasks.checkSerial(5);
 
     Wire.begin(SDA_PIN, SCL_PIN);
-    tasks.bmp.begin(BMP085_ULTRAHIGHRES, &Wire);
+    tasks.bmp.begin(BMP085_HIGHRES, &Wire);
 
     pinMode(SEPAR_PIN, OUTPUT);
     pinMode(BUZZER_PIN, OUTPUT);
