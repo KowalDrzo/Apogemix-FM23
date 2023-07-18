@@ -11,16 +11,24 @@ void Tasks::continuityTest() {
 
 /*********************************************************************/
 
-void Tasks::measure() {
+float Tasks::getPressureMedian() {
 
-    // Pressure and temperature:
     float press[3];
 
     for (uint8_t i = 0; i < 3; i++) {
         press[i] = bmp.readPressure();
     }
+
     std::sort(press, press+3);
-    glob.dataFrame.pressure = press[1];
+    return press[1];
+}
+
+/*********************************************************************/
+
+void Tasks::measure() {
+
+    // Pressure and temperature:
+    glob.dataFrame.pressure = getPressureMedian();
     glob.dataFrame.temper = bmp.readTemperature() * TEMPERATURE_FIX_A + TEMPERATURE_FIX_B;
 
     // Time:
@@ -72,7 +80,7 @@ void Tasks::buzz() {
     buzzBeep(30, 150, 2);
     vTaskDelay(2000 / portTICK_PERIOD_MS);
 
-    if (glob.dataFrame.continuity)                            buzzBeep(500, 500, 1);
+    if (glob.dataFrame.continuity) buzzBeep(500, 500, 1);
 }
 
 /*********************************************************************/

@@ -8,7 +8,7 @@ void setup() {
     Serial.setTimeout(10);
     tasks.checkSerial(5);
 
-    Wire.begin(SDA_PIN, SCL_PIN);
+    Wire.begin(SDA_PIN, SCL_PIN, 125000);
     tasks.bmp.begin(BMP085_HIGHRES, &Wire);
 
     pinMode(SEPAR_PIN, OUTPUT);
