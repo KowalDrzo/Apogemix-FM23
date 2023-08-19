@@ -47,7 +47,9 @@ void StateLoops::railLoop() {
 
         if (pressMeasureTimer.check()) {
 
+            uint32_t t1 = millis();
             dataLoop(0);
+            Serial.println(millis() - t1);
             if (tasks.isLaunchDetected()) {
 
                 if (website.isEnabled()) website.stop();

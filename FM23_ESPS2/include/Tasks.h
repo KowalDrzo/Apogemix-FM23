@@ -21,6 +21,7 @@ class Tasks {
     void continuityTest();
     Servo servos[2];
     bool serialOpened = false;
+    float getPressureMedian();
 
 public:
 
